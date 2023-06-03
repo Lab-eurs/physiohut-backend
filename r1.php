@@ -13,7 +13,7 @@
     $dbh = mysqli_connect($host,$uname,$pass) or die("cannot connect");
     mysqli_select_db($dbh,$dbname);
     
-    $sql = "INSERT INTO doctors VALUES('" .$id. "','".$name. "','" .$address. "','" .$afm. "')";
+    $sql = "INSERT INTO doctors VALUES(DEFAULT,'".$name. "','" .$address. "','" .$afm. "')";
     echo $sql;
     mysqli_query($dbh, $sql);
     mysqli_close($dbh);
