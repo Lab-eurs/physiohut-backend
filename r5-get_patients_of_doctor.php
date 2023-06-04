@@ -17,13 +17,13 @@ class PatientNames
 
         mysqli_select_db($dbh, $dbname);
 
-        // http://localhost/physiohut_backend/get_patient_names.php?doc_id=1
+        // http://localhost/physiohut-backend/get_patient_names.php?doc_id=1
         $data = array();
 
         // Get the doctor ID from the URL parameters
-        $doctor_id = 1;
+        $doctor_id = $_GET["doc_id"];
 
-        // Retrieve the patients' names
+        // Retrieve the patients
         $patients_sql = "SELECT * FROM patients WHERE doc_id = $doctor_id";
         $patients_result = mysqli_query($dbh, $patients_sql);
 

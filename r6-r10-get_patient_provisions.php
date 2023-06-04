@@ -56,13 +56,12 @@ class ProvisionsList
 
         mysqli_select_db($dbh, $dbname);
 
-
+        $patient_id = $_GET["patient_id"];
         $data = array();
-        $sql = "select * from visits;";
+        $sql = "select * from visits where id= $patient_id;";
         $result = mysqli_query($dbh, $sql);
         $counter = 0;
         while ($row = mysqli_fetch_array($result)) {
-            $patient_id = $row["patient_id"];
             $provision_id = $row["provision_id"];
             $timestamp_str = $row["time_stamp"];
             $data[$counter] = array();

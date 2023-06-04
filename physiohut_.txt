@@ -1,39 +1,106 @@
+
 -- DROP DATABASE physiohut;
-CREATE DATABASE physiohut; 
-USE physiohut;
-CREATE TABLE doctors(
+CREATE DATABASE IF NOT EXISTS physiohut;
+use physiohut;
+CREATE TABLE IF NOT EXISTS doctors(
     id INT NOT NULL AUTO_INCREMENT,
     NAME VARCHAR(255),
     address VARCHAR(255),
     afm CHAR(9),
     PRIMARY KEY(id)
-); CREATE TABLE patients(
-    id int(100) AUTO_INCREMENT,
+);
+
+CREATE TABLE IF NOT EXISTS patients(
+    id INT NOT NULL AUTO_INCREMENT,
     doc_id INT NOT NULL,
     NAME VARCHAR(255),
     address VARCHAR(255),
     amka CHAR(11),
     FOREIGN KEY(doc_id) REFERENCES doctors(id),
     PRIMARY KEY(id)
-); CREATE TABLE provisions(
+);
+
+CREATE TABLE IF NOT EXISTS provisions(
     id INT AUTO_INCREMENT,
-    date VARCHAR(20),
+    date varchar(10),
     CODE VARCHAR(20),
     description VARCHAR(255),
     price DECIMAL(5, 2),
     PRIMARY KEY(id)
-); CREATE TABLE users(
+); 
+
+CREATE TABLE IF NOT EXISTS users(
     username VARCHAR(20) UNIQUE NOT NULL,
     PASSWORD VARCHAR(20) UNIQUE NOT NULL,
     TYPE ENUM('doctor', 'patient', 'psf'),
     id INT(100)
-); CREATE TABLE visits(
-    patient_id INT,
-    provision_id INT,
-    -- doctor_id INT,
-    time_stamp VARCHAR(255),
+); 
+
+CREATE TABLE IF NOT EXISTS appointments(
+	ap_id int NOT NULL AUTO_INCREMENT,
+    patient_id int NOT NULL,
+    doc_id int NOT NULL,
+    scheduled_for DATETIME,
+    ap_state ENUM("pending","accepted","rejected","completed"),
+    completed_at_time DATETIME,
+    PRIMARY KEY(ap_id),
     FOREIGN KEY (patient_id) REFERENCES patients(id),
-    FOREIGN KEY (provision_id) REFERENCES provisions(id)
-    -- FOREIGN KEY (doctor_id) REFERENCES doctors(id)
-    
+    FOREIGN KEY(doc_id) REFERENCES doctors(id)
 );
+
+
+CREATE TABLE IF NOT EXISTS doctor_sessions(
+  doc_session_id int NOT NULL AUTO_INCREMENT,
+  provision_id int NOT NULL,
+  appon_id int NOT NULL,
+  sess_state ENUM("pending","completed","rejected"),
+  completed_at_time DATETIME,
+  PRIMARY KEY (doc_session_id),
+  FOREIGN KEY (provision_id) REFERENCES provisions(id),
+  FOREIGN KEY (appon_id) REFERENCES appointments(ap_id)
+);
+
+INSERT INTO doctors VALUES (DEFAULT,'Giannhs Karagiwrgos','Champs Elysee 32','123456789'),
+            (DEFAULT,'Giwrgos Karagiannhs','Rue de Tour Eiffel 32','987654321'),
+            (DEFAULT,'Giannhs xatzigiwrgos','Lion 15','123456788');
+INSERT INTO patients VALUES (DEFAULT,2,'Dhmhtris Karamitsos','Champs Elysee 32','123456789'),
+            (DEFAULT,3,'Mitsos Karadhmhtris','Rue de Tour Eiffel 32','987654321'),
+            (DEFAULT,1,'Dimitris xatzimitsos','Lion 15','123456789');
+            
+INSERT INTO provisions VALUES (DEFAULT,"15/12/2023",'CDE12','You relax a lot',10.40),
+(DEFAULT,"15/12/2023",'CVCE123','HELLO WORLD',15.20), 
+(DEFAULT,"15/12/2023",'hpk12$#','Treats mental illnesses',2.30);
+
+-- [4,5] patient,doctor, state="depends" gia patient paizei na xreiastw kai to doc_id na to parw apo kapou
+INSERT INTO appointments VALUES (DEFAULT,1,2,NOW(),"pending",null);
+INSERT INTO appointments VALUES (DEFAULT,2,3,NOW(),"accepted",NOW());
+INSERT INTO appointments VALUES (DEFAULT,3,1,NOW(),"rejected",null);
+-- [4,5] prov,apon
+INSERT INTO doctor_sessions VALUES(DEFAULT,2,1,"pending",null);
+INSERT INTO doctor_sessions VALUES(DEFAULT,1,1,"completed",NOW());
+INSERT INTO doctor_sessions VALUES(DEFAULT,3,2,"completed",NOW());
+-- get appointments of patients
+-- select * from appointments INNER JOIN doctor_sessions ON appointments.ap_id = doctor_sessions.appon_id where patient_id=1;
+
+
+-- get appointments of doctors with all the info[1,2,6 apla me ap_id sto where,7 vazw kai patient_id, session.state="completed"]
+-- select ap_state,patients.name,provisions.description,doctor_sessions.* from appointments 
+-- INNER JOIN doctor_sessions ON appointments.ap_id = doctor_sessions.appon_id 
+-- INNER JOIN patients ON appointments.patient_id = patients.id
+-- INNER JOIN provisions ON provisions.id = doctor_sessions.provision_id where appointments.doc_id=2;
+
+
+-- [8] gia oxi completed apla den xreiazetai to completed_at_time
+-- UPDATE doctor_sessions 
+-- SET sess_state = "completed", completed_at_time = NOW()
+-- WHERE doc_session_id = 1;
+
+-- [3]
+UPDATE appointments 
+SET ap_state = "completed",completed_at_time = NOW()
+WHERE ap_id = 1;
+
+
+
+
+

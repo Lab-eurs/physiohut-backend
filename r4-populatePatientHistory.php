@@ -12,6 +12,11 @@ GROUP_CONCAT(description) AS descriptions,
 GROUP_CONCAT(price) AS prices FROM provisions GROUP BY 
 CODE";
 $result = mysqli_query($dbh, $sql);
+if (!$result) {
+    mysqli_close($dbh);
+    echo json_encode("Error");
+}
+// echo json_encode($result);
 while ($row = mysqli_fetch_array($result)) {
     $nested_data = array();
     $nested_data['dates'] = $row['dates'];
