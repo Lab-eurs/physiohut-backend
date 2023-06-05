@@ -35,8 +35,7 @@ FROM
     JOIN doctors AS d ON a.doc_id = d.id
     JOIN provisions AS pr ON ds.provision_id = pr.id
 WHERE
-    p.id = $patient_id
-    AND ds.sess_state = 'completed';
+    p.id = $patient_id;
 ";
 
 $result = mysqli_query($connection, $query);
